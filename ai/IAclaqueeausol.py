@@ -16,6 +16,10 @@ class Server:
         
         body = cherrypy.request.json
         print(body)
+        
+        him = 1 
+        if body["players"][1] == body["you"] : 
+            him = 0
 
         coupPossibles = [0,1,2,3,4,5,9,10,14,15,19,20,21,22,23,24]
         ligneDebut = [1,2,3]
@@ -51,7 +55,7 @@ class Server:
 
 
 
-        while body["game"][cube] != None :
+        while body["game"][cube] != him :
             cube = coupPossibles[random.randint(0, len(coupPossibles)-1)]
             if cube in ligneDebut:
                 direction = dirPossLD[random.randint(0, len(dirPossLD) - 1)]

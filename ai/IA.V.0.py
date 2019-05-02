@@ -17,6 +17,10 @@ class Server:
         body = cherrypy.request.json
         print(body)
 
+        him = 1 
+        if body["players"][1] == body["you"] : 
+            him = 0
+
         coupPossibles = [0,1,2,3,4,5,9,10,14,15,20,21,22,23,24]
         directions = ["N","S","W","E"]
         ligneDebut = [0, 1, 2, 3, 4]
@@ -51,7 +55,7 @@ class Server:
         elif cube == 24 :
             direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
 
-        while body["game"][cube] != None :
+        while body["game"][cube] != him :
             cube = coupPossibles[random.randint(0, len(coupPossibles)-1)]
             if cube in ligneDebut:
                 direction = dirPossLD[random.randint(0, len(dirPossLD) - 1)]
@@ -79,7 +83,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     else:
-        port = 8080
+        port = 8081
 
     cherrypy.config.update({'server.socket_host':'0.0.0.0', 'server.socket_port': port})
     cherrypy.quickstart(Server())
