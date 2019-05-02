@@ -29,7 +29,7 @@ class Server:
         dirPossCF = ["N", "S", "E"]
 
         cube = coupPossibles[random.randint(0, len(coupPossibles)-1)]
-        dir = directions[random.randint(0,len(directions)-1)]
+        direction = directions[random.randint(0,len(directions)-1)]
         if cube in ligneDebut:
             direction = dirPossLD[random.randint(0, len(dirPossLD) - 1)]
         elif cube in ligneFin:
@@ -39,7 +39,7 @@ class Server:
         elif cube in ColFin:
             direction = dirPossCF[random.randint(0, len(dirPossCF) - 1)]
 
-        move =  {"cube": cube ,"direction": dir}
+        move =  {"cube": cube ,"direction": direction}
         while body["game"][cube] != None :
             cube = coupPossibles[random.randint(0, len(coupPossibles)-1)]
             if cube in ligneDebut:
