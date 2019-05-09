@@ -24,6 +24,9 @@ It need python 3.X and `cherrypy`. You can start it with :
 python server.py
 ```
 
+
+
+
 # Our AI
 
 ## Libraries
