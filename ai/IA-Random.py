@@ -47,7 +47,7 @@ class Server:
             direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
         elif cube < 5 :
             direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
-        elif cube % 5 == 0:
+        elif cube % 5 == 0 and cube != 20 :
             direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
         elif cube == 20:
             direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
@@ -68,7 +68,7 @@ class Server:
                 direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
             elif cube < 5:
                 direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
-            elif cube % 5 == 0:
+            elif cube % 5 == 0  and cube != 20 :
                 direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
             elif cube == 20:
                 direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
