@@ -2,6 +2,7 @@ import cherrypy
 import sys
 import random
 
+
 class Server:
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -17,12 +18,12 @@ class Server:
         body = cherrypy.request.json
         print(body)
 
-        you = 0 
-        if body["players"][1] == body["you"] : 
+        you = 0
+        if body["players"][1] == body["you"]:
             you = 1
 
-        coupPossibles = [0,1,2,3,4,5,9,10,14,15,20,21,22,23,24]
-        directions = ["N","S","W","E"]
+        coupPossibles = [0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 20, 21, 22, 23, 24]
+        directions = ["N", "S", "W", "E"]
         ligneDebut = [0, 1, 2, 3, 4]
         dirPossLD = ["S", "W", "E"]
         ligneFin = [20, 21, 22, 23, 24]
@@ -32,19 +33,20 @@ class Server:
         ColFin = [4, 9, 14, 19, 24]
         dirPossCF = ["N", "S", "W"]
         dirPossCoinHautG = ["S", "E"]
-        dirPossCoinHautD = ["S","W"]
+        dirPossCoinHautD = ["S", "W"]
         dirPossCoinBasG = ["N", "E"]
         dirPossCoinBasD = ["N", "W"]
 
-        cube = coupPossibles[random.randint(0, len(coupPossibles)-1)]
-        direction = directions[random.randint(0,len(directions)-1)]
-        if cube == 0 :
+        cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
+        direction = directions[random.randint(0, len(directions) - 1)]
+
+        if cube == 0:
             direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
-        elif cube == 4 :
+        elif cube == 4:
             direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
-        elif cube == 20 :
+        elif cube == 20:
             direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
-        elif cube == 24 :
+        elif cube == 24:
             direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
         elif cube in ligneDebut:
             direction = dirPossLD[random.randint(0, len(dirPossLD) - 1)]
@@ -55,17 +57,17 @@ class Server:
         elif cube in ColFin:
             direction = dirPossCF[random.randint(0, len(dirPossCF) - 1)]
 
-
         while body["game"][cube] != None and body["game"][cube] != you:
-            
-            cube = coupPossibles[random.randint(0, len(coupPossibles)-1)]
-            if cube == 0 :
+
+            cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
+
+            if cube == 0:
                 direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
-            elif cube == 4 :
+            elif cube == 4:
                 direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
-            elif cube == 20 :
+            elif cube == 20:
                 direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
-            elif cube == 24 :
+            elif cube == 24:
                 direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
             elif cube in ligneDebut:
                 direction = dirPossLD[random.randint(0, len(dirPossLD) - 1)]
@@ -76,17 +78,16 @@ class Server:
             elif cube in ColFin:
                 direction = dirPossCF[random.randint(0, len(dirPossCF) - 1)]
 
+        move = {"cube": cube, "direction": direction}
 
-        move =  {"cube": cube ,"direction": direction}
-
-        return {"move" : move,"message":cube}
+        return {"move": move, "message": cube}
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     else:
-        port = 8081
+        port = 8080
 
-    cherrypy.config.update({'server.socket_host':'0.0.0.0', 'server.socket_port': port})
+    cherrypy.config.update({'server.socket_host': '0.0.0.0', 'server.socket_port': port})
     cherrypy.quickstart(Server())
