@@ -2,7 +2,6 @@ import cherrypy
 import sys
 import random
 
-
 class Server:
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -19,44 +18,47 @@ class Server:
         print(body)
 
         you = 0
-        if body["players"][1] == body["you"]:
+        if body["players"][1] == body["you"] :
             you = 1
 
-        coupPossibles = [0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 20, 21, 22, 23, 24]
+        move = self.coupRandom(you, body)
+
+        return {"move" : move, "message" : move}
+
+    def coupRandom(self, player, body):
+
+        coupPossibles = [0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 19, 20, 21, 22, 23, 24]
         directions = ["N", "S", "W", "E"]
-        ligneDebut = [0, 1, 2, 3, 4]
-        dirPossLD = ["S", "W", "E"]
-        ligneFin = [20, 21, 22, 23, 24]
-        dirPossLF = ["N", "W", "E"]
-        ColDebut = [0, 5, 10, 15, 20]
-        dirPossCD = ["N", "S", "E"]
-        ColFin = [4, 9, 14, 19, 24]
-        dirPossCF = ["N", "S", "W"]
         dirPossCoinHautG = ["S", "E"]
         dirPossCoinHautD = ["S", "W"]
         dirPossCoinBasG = ["N", "E"]
         dirPossCoinBasD = ["N", "W"]
+        dirPossLHaut = ["S", "W", "E"]
+        dirPossLBas = ["N", "W", "E"]
+        dirPossCGauche = ["N", "S", "E"]
+        dirPossCDroite = ["N", "S", "W"]
 
         cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
         direction = directions[random.randint(0, len(directions) - 1)]
+
         if cube == 0:
             direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
-        elif cube == 4:
+        elif cube == 4 :
             direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
+        elif cube < 5 :
+            direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
+        elif cube % 5 == 0:
+            direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
         elif cube == 20:
             direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
         elif cube == 24:
             direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
-        elif cube in ligneDebut:
-            direction = dirPossLD[random.randint(0, len(dirPossLD) - 1)]
-        elif cube in ligneFin:
-            direction = dirPossLF[random.randint(0, len(dirPossLF) - 1)]
-        elif cube in ColDebut:
-            direction = dirPossCD[random.randint(0, len(dirPossCD) - 1)]
-        elif cube in ColFin:
-            direction = dirPossCF[random.randint(0, len(dirPossCF) - 1)]
+        elif cube > 19:
+            direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
+        elif (cube + 1) % 5 == 0:
+            direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
 
-        while body["game"][cube] != None and body["game"][cube] != you:
+        while body["game"][cube] != None and body["game"][cube] != player:
 
             cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
 
@@ -64,22 +66,29 @@ class Server:
                 direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
             elif cube == 4:
                 direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
+            elif cube < 5:
+                direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
+            elif cube % 5 == 0:
+                direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
             elif cube == 20:
                 direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
             elif cube == 24:
                 direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
-            elif cube in ligneDebut:
-                direction = dirPossLD[random.randint(0, len(dirPossLD) - 1)]
-            elif cube in ligneFin:
-                direction = dirPossLF[random.randint(0, len(dirPossLF) - 1)]
-            elif cube in ColDebut:
-                direction = dirPossCD[random.randint(0, len(dirPossCD) - 1)]
-            elif cube in ColFin:
-                direction = dirPossCF[random.randint(0, len(dirPossCF) - 1)]
+            elif cube > 19:
+                direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
+            elif (cube + 1) % 5 == 0:
+                direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
 
-        move = {"cube": cube, "direction": direction}
+        move = {"cube": cube,"direction": direction}
 
-        return {"move": move, "message": cube}
+        return move
+
+    def checkValue(self, body):
+
+        game = body["game"]
+
+
+
 
 
 if __name__ == "__main__":
@@ -88,5 +97,5 @@ if __name__ == "__main__":
     else:
         port = 8080
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0', 'server.socket_port': port})
+    cherrypy.config.update({'server.socket_host':'0.0.0.0', 'server.socket_port': port})
     cherrypy.quickstart(Server())

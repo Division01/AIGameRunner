@@ -33,47 +33,51 @@ class Server:
         dirPossCoinHautD = ["S", "W"]
         dirPossCoinBasG = ["N", "E"]
         dirPossCoinBasD = ["N", "W"]
+        dirPossLHaut = ["S", "W", "E"]
+        dirPossLBas = ["N", "W", "E"]
+        dirPossCGauche = ["N", "S", "E"]
+        dirPossCDroite = ["N", "S", "W"]
 
         cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
         direction = directions[random.randint(0, len(directions) - 1)]
 
-        if cube < 5 and cube % 5 == 0:
+        if cube == 0:
             direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
-        elif cube < 5 and (cube + 1) % 5 == 0:
+        elif cube == 4 :
             direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
-        elif cube < 5:
-            direction = "S"
+        elif cube < 5 :
+            direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
         elif cube % 5 == 0:
-            direction = "E"
-        elif cube > 19 and cube % 5 == 0:
+            direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
+        elif cube == 20:
             direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
-        elif cube > 19 and (cube + 1) % 5 == 0:
+        elif cube == 24:
             direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
         elif cube > 19:
-            direction = "N"
+            direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
         elif (cube + 1) % 5 == 0:
-            direction = "W"
+            direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
 
         while body["game"][cube] != None and body["game"][cube] != player:
 
             cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
 
-            if cube < 5 and cube % 5 == 0:
+            if cube == 0:
                 direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
-            elif cube < 5 and (cube + 1) % 5 == 0:
+            elif cube == 4:
                 direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
             elif cube < 5:
-                direction = "S"
+                direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
             elif cube % 5 == 0:
-                direction = "E"
-            elif cube > 19 and cube % 5 == 0:
+                direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
+            elif cube == 20:
                 direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
-            elif cube > 19 and (cube + 1) % 5 == 0:
+            elif cube == 24:
                 direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
             elif cube > 19:
-                direction = "N"
+                direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
             elif (cube + 1) % 5 == 0:
-                direction = "W"
+                direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
 
         move = {"cube": cube,"direction": direction}
 
