@@ -35,7 +35,7 @@ class Server:
 
         return {"move": move, "message" : message}
 
-    def coupRandom(self, body,player):
+    def coupRandom(self, body,player):          #Fonction qui joue un coup aléatoire mais qui respecte les règles du jeu
 
         coupPossibles = [0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 19, 20, 21, 22, 23, 24]
         dirPossCoinHautG = ["S", "E"]
@@ -92,7 +92,7 @@ class Server:
         return move
 
 
-    def check_line(self,body,you,him):
+    def check_line(self,body,you,him):          #Fonction qui vérifie si il y a des suites de X ou O en ligne
 
         count = 0
         index_free = 0
@@ -101,7 +101,7 @@ class Server:
             if body["game"][i] == you:                                                      #On cherche une case à nous
                 if i % 5 == 0:                                                              #Dans la première colonne
                     count = 0
-                    for j in range(5):                                                      #On a une case dans la première colonne, on voit si d'autres suivent en ligne
+                    for j in range(5):                                                      #On a une case à nous dans la première colonne, on voit si d'autres suivent en ligne
                         if body["game"][i+j] == you:
                             count += 1
                         else :
@@ -134,9 +134,10 @@ class Server:
                         side = "droit"
                         return self.play_for_pre_win(index_free, "ligne",him,body,you, side)
                     
-                else:
+                else:                                                                       #Si la case n'a pas de suite en ligne, on vérifie si elle a une suite en colonne
                     self.check_col(body,you,him)
-            elif body["game"][i] == him:
+            
+            elif body["game"][i] == him:                                                    #On repete tout mais avec l'adversaire pour l'empecher de gagner si suite de 4
                 if i % 5 == 0:
                     count = 0
                     for j in range(5):
@@ -158,7 +159,7 @@ class Server:
                 else:
                     self.check_col(body,you,him)
 
-    def check_col(self,body,you,him):
+    def check_col(self,body,you,him) :          #Fonction qui vérifie si il y a des suites de X ou O en colonne, meme fonctionnement que pour les lignes, pas besoin de com
 
         count = 0
         index_free = 0
@@ -174,7 +175,7 @@ class Server:
                             index_free = (i+5*j)
                     if count == 3:
                         side = "haut"
-                        return self.play_for_pre_win(index_free, "colonne",him,body,you, side)                      #index de la cinquieme ligne                
+                        return self.play_for_pre_win(index_free, "colonne",him,body,you, side)                                     
                     if count == 4:
                         return self.play_for_win(index_free,"colonne",him,body,you)
                 elif (i-5) in range(5):
@@ -186,7 +187,7 @@ class Server:
                             index_free = (i+5*j)
                     if count == 3 and (i == 5 or i == 9):
                         side = "milieu"
-                        return self.play_for_pre_win(index_free, "colonne",him,body,you, side)                  #index de la cinquieme ligne
+                        return self.play_for_pre_win(index_free, "colonne",him,body,you, side)                  
                     if count == 4:
                         return self.play_for_win(index_free,"colonne",him,body,you)
                 elif (i-10) in range(5):
@@ -224,14 +225,14 @@ class Server:
                     self.coupRandom(body,you)
 
 
-    def play_for_pre_win(self,index,direction,him,body,you, side):
+    def play_for_pre_win(self,index,direction,him,body,you, side):          #Fonction qui à partir de suites de 3, forme des suites de 4
 
         print('PLAYFORPREWIN')
 
         if direction == "ligne":
-            if body["game"][index] != him and side == "gauche" :                    #Cas où trois à gauche sont bons, l'index est celui de la 5eme colonne
+            if body["game"][index] != him and side == "gauche" :                    
                 return {"cube" : index, "direction" : "W"}                    #NoteToSelf, tu peux ajouter le cas où on est en première ou dernière ligne et profiter de l'autre extremite du coup
-            elif body["game"][index] != him and side == "droit" :                       #Cas où trois à droite sont bons, l'index est celui de la première colonne
+            elif body["game"][index] != him and side == "droit" :                      
                 return {"cube" : index, "direction" : "E"}
             elif side == "milieu" and index == 0 :                                      
                 for i in range(1,5) :
@@ -249,7 +250,7 @@ class Server:
             else :
                 return self.coupRandom(body,you)
 
-        if direction == "colonne":                      #haut index ligne 5, milieu index ligne 5, bas index ligne 1
+        if direction == "colonne":                      
             if body["game"][index] != him and side == "haut" :
                 return {"cube" : index, "direction" : "N"}
             elif body["game"][index] != him and side == "bas" :
@@ -271,7 +272,7 @@ class Server:
                 return self.coupRandom(body, you)
 
 
-    def play_for_win(self,index,direction,him,body,you):
+    def play_for_win(self,index,direction,him,body,you):                    #Fonction qui complete les suites de 4 pour gagner
 
         print('PLAYFORWIN')
 
@@ -309,7 +310,7 @@ class Server:
             else:
                 return self.coupRandom(body, you)
 
-    def play_for_counter(self,index,direction,him,body,you):
+    def play_for_counter(self,index,direction,him,body,you):                #Fonction qui contre les suites de 4 adverse
         return self.coupRandom(body,you)
 
 
