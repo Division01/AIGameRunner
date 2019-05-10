@@ -24,7 +24,7 @@ class Server:
             you = 1
             him = 0
 
-        bestMove = self.check_line(body,you,him)
+        self.check_line(body,you,him)
 
         move = self.coupRandom(body,you)
         print(move["cube"], move["direction"])
@@ -97,6 +97,7 @@ class Server:
         for i in range(len(body["game"])):
             if body["game"][i] == you:
                 if i % 5 == 0:
+                    count = 0
                     for j in range(5):
                         if body["game"][i+j] == you:
                             count += 1
@@ -104,18 +105,21 @@ class Server:
                             index_free = (i+j)
                     if count == 4:
                         return self.play_for_win(index_free, "ligne",him,body,you)
-
+                    
                 elif (i-1) % 5 == 0:
                     index_free = i-1
+                    count = 0
                     for j in range(4):
                         if body["game"][i+j] == you:
                             count += 1
                     if count == 4:
                         return self.play_for_win(index_free, "ligne",him,body,you)
+                    
                 else:
                     self.check_col(body,you,him)
             elif body["game"][i] == him:
                 if i % 5 == 0:
+                    count = 0
                     for j in range(5):
                         if body["game"][i+j] == you:
                             count += 1
@@ -126,6 +130,7 @@ class Server:
 
                 elif (i-1) % 5 == 0:
                     index_free = i-1
+                    count = 0
                     for j in range(4):
                         if body["game"][i+j] == you:
                             count += 1
@@ -142,6 +147,7 @@ class Server:
         for i in range(len(body["game"])):
             if body["game"][i] == you:
                 if i in range(5):
+                    count = 0
                     for j in range(5):
                         if body["game"][i+5+j] == you:
                             count += 1
@@ -150,6 +156,7 @@ class Server:
                     if count == 4:
                         return self.play_for_win(index_free,"colonne",him,body,you)
                 elif (i-5) in range(5):
+                    count = 0
                     for j in range(4):
                         if body["game"][i+5+j] == you:
                             count += 1
@@ -161,6 +168,7 @@ class Server:
                     self.coupRandom(body,you)
             elif body["game"][i] == him:
                 if i in range(5):
+                    count = 0
                     for j in range(5):
                         if body["game"][i+5+j] == him:
                             count += 1
@@ -169,6 +177,7 @@ class Server:
                     if count == 4:
                         return self.play_for_counter(index_free,"colonne",him,body,you)
                 elif (i-5) in range(5):
+                    count = 0
                     for j in range(4):
                         if body["game"][i+5+j] == him:
                             count += 1
