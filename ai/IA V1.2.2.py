@@ -83,27 +83,53 @@ class Server:
         elif (cube + 1) % 5 == 0:
             direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
 
-        while body["game"][cube] != None and body["game"][cube] != player:  # Si le cube choisi n'est pas vide, et pas à toi, il en choisi un nouveau
+        CaseLibre = False
+        for coup in coupPossibles :
+            if body["game"][coup] == None :
+                CaseLibre = True
 
-            cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
+        if CaseLibre == True :
+            while body["game"][cube] != None :                  # Si le cube choisi n'est pas vide, il en choisi un nouveau
 
-            if cube == 0:
-                direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
-            elif cube == 4:
-                direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
-            elif cube < 5:
-                direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
-            elif cube % 5 == 0 and cube != 20:
-                direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
-            elif cube == 20:
-                direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
-            elif cube == 24:
-                direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
-            elif cube > 19:
-                direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
-            elif (cube + 1) % 5 == 0:
-                direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
+                cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
 
+                if cube == 0:
+                    direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
+                elif cube == 4:
+                    direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
+                elif cube < 5:
+                    direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
+                elif cube % 5 == 0 and cube != 20:
+                    direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
+                elif cube == 20:
+                    direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
+                elif cube == 24:
+                    direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
+                elif cube > 19:
+                    direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
+                elif (cube + 1) % 5 == 0:
+                    direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
+        else :                                                                                  #elif body["game"][cube] != player : est envisageable, mais else couvre tout si mon if prec fct pas
+            while body["game"][cube] != player :
+                
+                cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
+
+                if cube == 0:
+                    direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
+                elif cube == 4:
+                    direction = dirPossCoinHautD[random.randint(0, len(dirPossCoinHautD) - 1)]
+                elif cube < 5:
+                    direction = dirPossLHaut[random.randint(0, len(dirPossLHaut) - 1)]
+                elif cube % 5 == 0 and cube != 20:
+                    direction = dirPossCGauche[random.randint(0, len(dirPossCGauche) - 1)]
+                elif cube == 20:
+                    direction = dirPossCoinBasG[random.randint(0, len(dirPossCoinBasG) - 1)]
+                elif cube == 24:
+                    direction = dirPossCoinBasD[random.randint(0, len(dirPossCoinBasD) - 1)]
+                elif cube > 19:
+                    direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
+                elif (cube + 1) % 5 == 0:
+                    direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
         move = {"cube": cube, "direction": direction}
         return move
 
@@ -129,23 +155,21 @@ class Server:
                             index_free = (i+j)
                     if count == 4:
                         return {"player": him, "4following": True, "index": index_free}
-            elif (i - 1) % 5 == 0 and body["game"][i] != None:
+            if (i - 1) % 5 == 0 and body["game"][i] != None:
                 if body['game'][i] == you:
                     count = 0
+                    index_free = i - 1
                     for j in range(4):
                         if body['game'][i + j] == you:
                             count += 1
-                        else:
-                            index_free = i -1
                     if count == 4:
                         return {"player": you, "4following": True, "index": index_free}
                 else:
                     count = 0
+                    index_free = i -1
                     for j in range(4):
                         if body['game'][i + j] == him:
                             count += 1
-                        else:
-                            index_free = i -1
                     if count == 4:
                         return {"player": him, "4following": True, "index": index_free}
         return {'4following': False}
