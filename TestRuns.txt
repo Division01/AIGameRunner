@@ -1,0 +1,27 @@
+Version 1.2.2 avec randomise qui priorise et les 4 coups gagnants
+
+Game 1 : Winner Random en 17 coups
+Game 2 : Winner IA en 18 coups
+Game 3 : Winner IA en 22 coups
+Game 4 : Winner IA en 20 coups
+Game 5 : Winner IA en 28 coups
+Game 6 : Winner IA en 22 coups
+Game 7 : Winner IA en 20 coups
+Game 8 : Winner IA en 22 coups
+Game 9 : Winner IA en 26 coups
+Game 10 : Winner IA en 22 coups
+
+
+
+Version 1.3 avec ajouts des suites de 3
+
+Game 1 : Winner IA en 24 coups
+Game 2 : Winner IA en 18 coups
+Game 3 : Winner IA en 18 coups
+Game 4 : Winner IA en 18 coups
+Game 5 : Winner IA en 28 coups
+Game 6 : Winner IA en 24 coups
+Game 7 : Winner IA en 20 coups
+Game 8 : Winner IA en 18 coups
+Game 9 : Winner IA en 12 coups
+Game 10 : Winner IA en 24 coups
