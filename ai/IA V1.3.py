@@ -45,6 +45,24 @@ class Server:
             else :
                 move = self.coupRandom(you, body)
                 message = "4 en colonnes him"
+        elif check_ligne["4following"] == "gauche" :
+            move = self.play_for_pre_win(check_ligne["index"],"ligne",him, body, you, "gauche" )
+            message = "3 en lignes gauche"
+        elif check_ligne["4following"] == "milieu" :
+            move = self.play_for_pre_win(check_ligne["index"],"ligne",him, body, you, "milieu")
+            message = "3 en lignes milieu"
+        elif check_ligne["4following"] == "droit" :
+            move = self.play_for_pre_win(check_ligne["index"],"ligne",him, body, you, "droit")
+            message = "3 en lignes droit"
+        elif check_col["4following"] == "haut" :
+            move = self.play_for_pre_win(check_col["index"],"colonne",him, body, you, "haut")
+            message = "3 en colonne haut"
+        elif check_col["4following"] == "milieu" :
+            move = self.play_for_pre_win(check_col["index"],"colonne",him, body, you, "milieu")
+            message = "3 en colonne milieu"
+        elif check_col["4following"] == "bas" :
+            move = self.play_for_pre_win(check_col["index"],"colonne",him, body, you, "bas")
+            message = "3 en colonne bas"
         else:
             move = self.coupRandom(you, body)
             message = "random"
@@ -139,12 +157,18 @@ class Server:
             if i % 5 == 0 and body["game"][i] != None:
                 if body['game'][i] == you:
                     count = 0
+                    countTriple = 0
                     for j in range(5):
                         if body['game'][i + j] == you:
                             count += 1
+                            countTriple += 1                                                #Precaution oblige si X, O, X, X, O car count = 3 mais countTriple = 2
+                            if body["game"][i+j] != body["game"][i+j-1] and j != 0 :
+                                countTriple = 0
                         else:
                             index_free = (i+j)
-                    if count == 4:
+                    if countTriple == 3:
+                        return {"player": you, "4following": "gauche", "index": i+4} 
+                    elif count == 4:
                         return {"player": you, "4following": True, "index": index_free}
                 else:
                     count = 0
@@ -155,13 +179,20 @@ class Server:
                             index_free = (i+j)
                     if count == 4:
                         return {"player": him, "4following": True, "index": index_free}
+            
             if (i - 1) % 5 == 0 and body["game"][i] != None:
                 if body['game'][i] == you:
                     count = 0
+                    countTriple = 0
                     index_free = i - 1
                     for j in range(4):
                         if body['game'][i + j] == you:
                             count += 1
+                            countTriple += 1                                        
+                            if body["game"][i+j] != body["game"][i+j-1]  and j != 0 :
+                                countTriple = 0
+                    if countTriple == 3 and (i == 1 or i == 21) :
+                        return {"player": you, "4following": "milieu", "index": i + 3}
                     if count == 4:
                         return {"player": you, "4following": True, "index": index_free}
                 else:
@@ -172,6 +203,16 @@ class Server:
                             count += 1
                     if count == 4:
                         return {"player": him, "4following": True, "index": index_free}
+            
+            if (i-2) % 5 == 0 and body["game"][i] == you :  
+                index_free = i-2
+                count = 0
+                for j in range(3):
+                    if body["game"][i+j] == you:
+                        count += 1
+                if count == 3:
+                    return {"player": you, "4following": "droit", "index": i - 2}
+
         return {'4following': False}
 
     def check_col(self, body, you, him):
@@ -180,11 +221,17 @@ class Server:
             if i in range(5) and body["game"][i] != None:
                 if body['game'][i] == you:
                     count = 0
+                    countTriple = 0
                     for j in range(5):
                         if body['game'][i + 5 * j] == you:
                             count += 1
+                            countTriple += 1                                        
+                            if body["game"][i+5*j] != body["game"][i+5*(j-1)] and j != 0  :
+                                countTriple = 0
                         else:
                             index_free = i + 5*j
+                    if countTriple == 3 : 
+                        return {"player": you, "4following": "haut", "index": i + 20}
                     if count == 4:
                         return {"player": you, "4following": True, "index": index_free}
                 else:
@@ -199,10 +246,16 @@ class Server:
             if (i - 5) in range(5) and body["game"][i] != None:
                 if body['game'][i] == you:
                     count = 0
+                    countTriple = 0
                     index_free = i-5
                     for j in range(4):
                         if body['game'][i + 5 * j] == you:
                             count += 1
+                            countTriple += 1                                        
+                            if body["game"][i+5*j] != body["game"][i+5*(j-1)] and j != 0  :
+                                countTriple = 0
+                    if countTriple == 3 and (i == 5 or i == 9):
+                        return {"player": you, "4following": "milieu", "index": i -5}
                     if count == 4:
                         return {"player": you, "4following": True, "index": index_free}
                 else:
@@ -213,7 +266,64 @@ class Server:
                             count += 1
                     if count == 4:
                         return {"player": him, "4following": True, "index": index_free}
+            if (i-10) in range(5):
+                    count = 0
+                    for j in range(3) : 
+                        if body["game"][i+5*j] == you:
+                            count += 1
+                    if count == 3 :
+                        return {"player": you, "4following": "bas", "index": i-10}
+            
         return {"4following": False}
+
+
+    def play_for_pre_win(self,index,direction,him,body,you, side):          #Fonction qui à partir de suites de 3, forme des suites de 4
+
+        if direction == "ligne":
+            if body["game"][index] != him and side == "gauche" :                    
+                return {"cube" : index, "direction" : "W"}                    #NoteToSelf, tu peux ajouter le cas où on est en première ou dernière ligne et profiter de l'autre extremite du coup
+            elif body["game"][index] != him and side == "droit" :                      
+                return {"cube" : index, "direction" : "E"}
+            elif side == "milieu" and index == 0 :                                      
+                for i in range(1,5) :
+                    if body["game"][5*i] != him :
+                        return {"cube" : 5*i, "direction" : "N"}
+                    elif body["game"][4 + 5*i] != him :
+                        return {"cube" : 4 + 5*i, "direction" : "N"}
+            elif side == "milieu" and index == 20 :
+                for i in range(4) :    
+                    if body["game"][5*i] != him :
+                        return {"cube" : 5*i, "direction" : "S"}
+                    elif body["game"][4 + 5*i] != him :
+                        return {"cube" : 4 + 5*i, "direction" : "S"}
+
+            else :
+                return self.coupRandom(you, body)
+
+        if direction == "colonne":                      
+            if body["game"][index] != him and side == "haut" :
+                return {"cube" : index, "direction" : "N"}
+            elif body["game"][index] != him and side == "bas" :
+                return {"cube" : index, "direction" : "S"}
+            elif side == "milieu" and index == 5 :
+                for i in range(1,5) :
+                    if body["game"][i] != him :
+                        return {"cube" : i, "direction" : "W"}
+                    elif body["game"][20 + i] != him :
+                        return {"cube" : 20 + i, "direction" : "W"}
+            elif side == "milieu" and index == 9 :
+                for i in range(1,5) :
+                    if body["game"][4-i] != him :
+                        return {"cube" : 4-i, "direction" : "E"}
+                    elif body["game"][24 - i] != him :
+                        return {"cube" : 24 - i, "direction" : "E"}
+                
+            else :
+                return self.coupRandom(you, body)
+
+
+
+
 
     def play_for_win(self, body, index, direction, you, him):
 
