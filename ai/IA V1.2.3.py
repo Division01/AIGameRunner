@@ -40,17 +40,17 @@ class Server:
                     move = self.play_for_win(body, check_col["index"], "colonne", you, him)
                     message = "4 en colonnes"
                 else:
-                    move = self.coupRandom(you, body)
+                    move = self.play_for_counter(body,check_col["index"],"colonne",you,him)
                     message = "4 en colonnes him"
             else:
-                move = self.coupRandom(you, body)
+                move = self.play_for_counter(body, check_ligne["index"], "ligne", you, him)
                 message = "4 en lignes him"
         elif check_col["4following"] == True:
             if check_col["player"] == you:
                 move = self.play_for_win(body, check_col["index"], "colonne", you, him)
                 message = "4 en colonnes"
             else:
-                move = self.coupRandom(you, body)
+                move = self.play_for_counter(body, check_col["index"], "colonne", you, him)
                 message = "4 en colonnes him"
         elif check_ligne["4following"] == "gauche":
             move = self.play_for_pre_win(check_ligne["index"], "ligne", him, body, you, "gauche")
@@ -76,10 +76,12 @@ class Server:
 
         return {"move": move, "message": message}
 
-    def coupRandom(self, player, body):
+    def coupRandom(self, player, body,index=None):
 
         coupPossibles = [0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 19, 20, 21, 22, 23,
                          24]  # On defini en liste les coups autorises en fonction des positions jouees
+        if index != None:
+            coupPossibles.remove(index)
 
         dirPossCoinHautG = ["S", "E"]
         dirPossCoinHautD = ["S", "W"]
@@ -452,12 +454,95 @@ class Server:
                 else:
                     return self.coupRandom(you, body)
 
+    def play_for_counter(self,body,index, direction, you, him):
 
+        if direction == "ligne":
+            if index in range(5):
+                if body['game'][index] == you and body['game'][index+20] == you:
+                    self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][i] == him and body['game'][i+20] != him:
+                        return {'cube':i+20,'direction':'N'}
+                return self.coupRandom(you,body)
+            elif index in range(20,25):
+                if body['game'][index] == you and body['game'][index-20] == you:
+                    self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][i+20] == him and body['game'][i] != him:
+                        return {'cube': i,'direction':'S'}
+                return self.coupRandom(you,body)
+            elif index % 5 == 0:
+                if body['game'][index] == you and (body['game'][index-5] == you and body['game'][index+5] == you):
+                    return self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][index+i] == him:
+                        if body['game'][(index+i)%5] != him and body['game'][index+i+5] != him:
+                            return {'cube':(index+i)%5,'direction':'S'}
+                        elif body['game'][((index+i)%5)+20] != him and body['game'][index+i-5] != him:
+                            return {'cube': ((index + i) % 5)+20, 'direction': 'N'}
+                        elif body['game'][index+4+5] != him and body['game'][index+4-5] != him:
+                            return {'cube':index,'direction':'E'}
+                        else:
+                            return self.coupRandom(you,body)
+            elif (index+1) % 5 == 0:
+                if body['game'][index] == you and (body['game'][index-5] == you and body['game'][index+5] == you):
+                    return self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][index-i] == him:
+                        if body['game'][(index-i)%5] != him and body['game'][(index-i)+5] != you:
+                            return {'cube':(index-i)%5,'direction':'S'}
+                        elif body['game'][((index-i)%5)+20] != him and body['game'][(index-i)-5] != you:
+                            return {'cube': ((index - i) % 5)+20, 'direction': 'N'}
+                        elif body['game'][index-4+5] != him or body['game'][index-4-5] != him:
+                            return {'cube':index,'direction':'W'}
+                        else:
+                            return self.coupRandom(you,body)
+        elif direction == 'colonne':
+            if index % 5 == 0:
+                if body['game'][index] == you and body['game'][index+4] == you:
+                    self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][5*i] == him and body['game'][5*i+4] != him:
+                        return {'cube':i*5+4,'direction':'W'}
+                return self.coupRandom(you,body)
+            elif (index +1)%5==0:
+                if body['game'][index] == you and body['game'][index-4] == you:
+                    self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][5*i+4] == him and body['game'][5*i] != him:
+                        return {'cube': 5*i,'direction':'E'}
+                return self.coupRandom(you,body)
+            elif index in range(5):
+                if body['game'][index] == you and (body['game'][index-1] == you and body['game'][index+1] == you):
+                    return self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][index+5*i] == him:
+                        if body['game'][5*i] != him and body['game'][index+5*i+1] != him:
+                            return {'cube':5*i,'direction':'E'}
+                        elif body['game'][5*i+4] != him and body['game'][index+5*i-1] != him:
+                            return {'cube': 5*i+4, 'direction': 'W'}
+                        elif body['game'][index+20+1] != him and body['game'][index+20-1] != him:
+                            return {'cube':index,'direction':'S'}
+                        else:
+                            return self.coupRandom(you,body)
+            elif index in range(20,25):
+                if body['game'][index] == you and (body['game'][index-1] == you and body['game'][index+1] == you):
+                    return self.coupRandom(you,body,index)
+                for i in range(5):
+                    if body['game'][index-5*i] == him:
+                        if body['game'][5*i] != him and body['game'][index-5*i+1] != him:
+                            return {'cube':5*i,'direction':'E'}
+                        elif body['game'][5*i+4] != him and body['game'][index-5*i-1] != him:
+                            return {'cube': 5*i+4, 'direction': 'W'}
+                        elif body['game'][index-20+1] != him and body['game'][index-20-1] != him:
+                            return {'cube':index,'direction':'S'}
+                        else:
+                            return self.coupRandom(you,body)
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     else:
-        port = 8083
+        port = 8081
 
     cherrypy.config.update({'server.socket_host': '0.0.0.0', 'server.socket_port': port})
     cherrypy.quickstart(Server())
