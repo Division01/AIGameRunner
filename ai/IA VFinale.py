@@ -7,7 +7,8 @@ class Server:
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def move(self):
+
+    def move(self):                                                                                                 # La fonction qui est appelée à chaque tour
         # Deal with CORS
         cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
         cherrypy.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
@@ -17,7 +18,7 @@ class Server:
 
         body = cherrypy.request.json  # On importe l'etat du plateau de jeu
 
-        you = 0  # On defini quel joueur on est
+        you = 0                                                                                                     # On defini quel joueur on est
         him = 1
         if body["players"][1] == body["you"]:
             you = 1
@@ -28,10 +29,10 @@ class Server:
                     "Meme un zero serait surcoter ton IA"]
         random.shuffle(Messages)
 
-        check_ligne = self.check_line(body, you, him)
+        check_ligne = self.check_line(body, you, him)                                                               # On analyse la situation du plateau
         check_col = self.check_col(body, you, him)
 
-        if check_ligne["4following"] == True:
+        if check_ligne["4following"] == True:                                                                       # On joue en fonction de la situation du plateau
             if check_ligne["player"] == you:
                 move = self.play_for_win(body, check_ligne["index"], "ligne", you, him)
                 message = "4 en lignes"
@@ -76,10 +77,10 @@ class Server:
 
         return {"move": move, "message": message}
 
-    def coupRandom(self, player, body,index=None):
+    def coupRandom(self, player, body,index=None):                                                                  # Fonction qui joue aléatoirement les GoodMoves si besoin
 
         coupPossibles = [0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 19, 20, 21, 22, 23,
-                         24]  # On defini en liste les coups autorises en fonction des positions jouees
+                         24]                                                                            # On defini en liste les coups autorises en fonction des positions jouees
         if index != None:
             coupPossibles.remove(index)
 
@@ -92,8 +93,7 @@ class Server:
         dirPossCGauche = ["N", "S", "E"]
         dirPossCDroite = ["N", "S", "W"]
 
-        cube = coupPossibles[random.randint(0, len(
-            coupPossibles) - 1)]  # On choisi un coup aleatoire dans la liste des positions aux extremeties du jeu
+        cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]                         # On choisi un coup aleatoire dans la liste des positions aux extremites du jeu
 
         if cube == 0:  # En fonction du coup, on prends une des directions autorisées aléatoirement
             direction = dirPossCoinHautG[random.randint(0, len(dirPossCoinHautG) - 1)]
@@ -113,12 +113,12 @@ class Server:
             direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
 
         CaseLibre = False
-        for coup in coupPossibles:
+        for coup in coupPossibles:                                                          # On donne priorité aux cases vides pour prendre le max de cases sur le plateau
             if body["game"][coup] == None:
                 CaseLibre = True
 
         if CaseLibre == True:
-            while body["game"][cube] != None:  # Si le cube choisi n'est pas vide, il en choisi un nouveau
+            while body["game"][cube] != None:                                               # Si le cube choisi n'est pas vide, il en choisi un nouveau
 
                 cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
 
@@ -138,7 +138,7 @@ class Server:
                     direction = dirPossLBas[random.randint(0, len(dirPossLBas) - 1)]
                 elif (cube + 1) % 5 == 0:
                     direction = dirPossCDroite[random.randint(0, len(dirPossCDroite) - 1)]
-        else:  # elif body["game"][cube] != player : est envisageable, mais else couvre tout si mon if prec fct pas
+        else:  
             while body["game"][cube] != player:
 
                 cube = coupPossibles[random.randint(0, len(coupPossibles) - 1)]
@@ -162,10 +162,10 @@ class Server:
         move = {"cube": cube, "direction": direction}
         return move
 
-    def check_line(self, body, you, him):
+    def check_line(self, body, you, him):                                                                           # Vérifie si il y a des suites (3 ou 4) en ligne
 
-        for i in range(25):
-            if i % 5 == 0 and body["game"][i] != None:
+        for i in range(25):     
+            if i % 5 == 0 and body["game"][i] != None:                                              # Si la case est dans la première colonne
                 if body['game'][i] == you:
                     count = 0
                     countTriple = 0
@@ -191,7 +191,7 @@ class Server:
                     if count == 4:
                         return {"player": him, "4following": True, "index": index_free}
 
-            if (i - 1) % 5 == 0 and body["game"][i] != None:
+            if (i - 1) % 5 == 0 and body["game"][i] != None:                                        # Si la case est dans la deuxième colonne
                 if body['game'][i] == you:
                     count = 0
                     countTriple = 0
@@ -215,7 +215,7 @@ class Server:
                     if count == 4:
                         return {"player": him, "4following": True, "index": index_free}
 
-            if (i - 2) % 5 == 0 and body["game"][i] == you:
+            if (i - 2) % 5 == 0 and body["game"][i] == you:                                        # Si la case est dans la troisième colonne (suite de 3 seulement)
                 index_free = i - 2
                 count = 0
                 for j in range(3):
@@ -226,7 +226,7 @@ class Server:
 
         return {'4following': False}
 
-    def check_col(self, body, you, him):
+    def check_col(self, body, you, him):                                                                            # Comme pour check_line mais en col, même logique
 
         for i in range(25):
             if i in range(5) and body["game"][i] != None:
@@ -287,11 +287,11 @@ class Server:
 
         return {"4following": False}
 
-    def play_for_pre_win(self, index, direction, him, body, you, side):  # Fonction qui à partir de suites de 3, forme des suites de 4
+    def play_for_pre_win(self, index, direction, him, body, you, side):                     # Fonction qui à partir de suites de 3, forme des suites de 4
 
         if direction == "ligne":
             if body["game"][index] != him and side == "gauche":
-                return {"cube": index, "direction": "W"} # NoteToSelf, tu peux ajouter le cas où on est en première ou dernière ligne et profiter de l'autre extremite du coup
+                return {"cube": index, "direction": "W"} 
             if body['game'][index] == him and side == 'gauche':
                 if body['game'][index-1] != him and (index == 4 or index == 24):
                     return {'cube' : index - 1,'direction' : "W"}
@@ -312,7 +312,6 @@ class Server:
                         return {"cube": 5 * i, "direction": "S"}
                     elif body["game"][4 + 5 * i] != him:
                         return {"cube": 4 + 5 * i, "direction": "S"}
-
             else:
                 return self.coupRandom(you, body)
 
@@ -333,11 +332,10 @@ class Server:
                         return {"cube": 4 - i, "direction": "E"}
                     elif body["game"][24 - i] != him:
                         return {"cube": 24 - i, "direction": "E"}
-
             else:
                 return self.coupRandom(you, body)
 
-    def play_for_win(self, body, index, direction, you, him):
+    def play_for_win(self, body, index, direction, you, him):                               # Fonction qui termine des suites de 4 pour gagner
 
         if direction == "ligne":
             if body['game'][index] == None:
@@ -454,7 +452,7 @@ class Server:
                 else:
                     return self.coupRandom(you, body)
 
-    def play_for_counter(self,body,index, direction, you, him):
+    def play_for_counter(self,body,index, direction, you, him):                             # Fonction qui contre les suites de 4 adverses (pour empêcher un "gg ez")
 
         if direction == "ligne":
             if index in range(5):
@@ -540,6 +538,8 @@ class Server:
                             return {'cube':index,'direction':'S'}
                         else:
                             return self.coupRandom(you,body)
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
