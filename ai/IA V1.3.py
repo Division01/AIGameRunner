@@ -282,15 +282,21 @@ class Server:
         if direction == "ligne":
             if body["game"][index] != him and side == "gauche" :                    
                 return {"cube" : index, "direction" : "W"}                    #NoteToSelf, tu peux ajouter le cas où on est en première ou dernière ligne et profiter de l'autre extremite du coup
-            elif body["game"][index] != him and side == "droit" :                      
+            if body["game"][index] == him and side == "gauche" :  
+                if body["game"][index-1] != him  and (index == 4 or index == 24) :  
+                    return {"cube" : index-1, "direction" : "W"}
+            if body["game"][index] != him and side == "droit" :                      
                 return {"cube" : index, "direction" : "E"}
-            elif side == "milieu" and index == 0 :                                      
+            if body["game"][index] == him and side == "droit" :                      
+                if body["game"][index+1] != him and (index == 0 or index == 20):    
+                    return {"cube" : +1, "direction" : "E"}
+            if side == "milieu" and index == 0 :                                      
                 for i in range(1,5) :
                     if body["game"][5*i] != him :
                         return {"cube" : 5*i, "direction" : "N"}
                     elif body["game"][4 + 5*i] != him :
                         return {"cube" : 4 + 5*i, "direction" : "N"}
-            elif side == "milieu" and index == 20 :
+            if side == "milieu" and index == 20 :
                 for i in range(4) :    
                     if body["game"][5*i] != him :
                         return {"cube" : 5*i, "direction" : "S"}
@@ -303,15 +309,21 @@ class Server:
         if direction == "colonne":                      
             if body["game"][index] != him and side == "haut" :
                 return {"cube" : index, "direction" : "N"}
-            elif body["game"][index] != him and side == "bas" :
+            if body["game"][index] == him and side == "haut" :
+                if body["game"][index-5] != him  and (index == 20 or index == 24):
+                    return {"cube" : index-5, "direction" : "N"}
+            if body["game"][index] != him and side == "bas" :
                 return {"cube" : index, "direction" : "S"}
-            elif side == "milieu" and index == 5 :
+            if body["game"][index] == him and side == "bas" :
+                if body["game"][index+5] != him  and (index == 0 or index == 4):    
+                    return {"cube" : index+5, "direction" : "S"}
+            if side == "milieu" and index == 5 :
                 for i in range(1,5) :
                     if body["game"][i] != him :
                         return {"cube" : i, "direction" : "W"}
                     elif body["game"][20 + i] != him :
                         return {"cube" : 20 + i, "direction" : "W"}
-            elif side == "milieu" and index == 9 :
+            if side == "milieu" and index == 9 :
                 for i in range(1,5) :
                     if body["game"][4-i] != him :
                         return {"cube" : 4-i, "direction" : "E"}

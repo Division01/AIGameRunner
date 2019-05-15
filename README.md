@@ -1,3 +1,21 @@
+
+# Our AI
+
+## Libraries
+
+We're using for both our AIs `cherrypy` , `sys` and `random`, be sure to have all of them installed before launching our codes.
+
+
+## Strategy
+
+We'll start every single game with random plays, but giving priority to the empty slots on the board to maximize our pawns in the end (and more pawns means more availables plays). Every turn we analyze the board with a function that tells us if there is any consecutive pawns (3 or 4). 
+If there are 4 consecutive of our pawns, we play to end the game and if the move is impossible we play to make it possible (by shifting the adversary pawn which is in the way).
+If there are 4 consecutive of his pawns, we play to block his winning play.
+If there are 3 consecutive of our pawns, we play to make it 4, so that next turn we can use the winning play function (see above).
+If we had more time we could have tried to make the 3 consecutive pawns better (making a play possible for next turn for exemple), we could also add the 2 consecutive pawns play our taking in consideration the diagonal plays.
+
+
+
 # AIGameRunner
 
 ## Installation
@@ -25,14 +43,3 @@ python server.py
 ```
 
 
-
-
-# Our AI
-
-## Libraries
-
-We're using for both our AIs `cherrypy` and `random`, be sure to have both of them installed before launching them.
-
-## Strategy
-
-It's still a competition, it won't be revealed before the D day, but good try mate !
