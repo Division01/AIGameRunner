@@ -56,5 +56,4 @@ It need python 3.X and `cherrypy`. You can start it with :
 ```
 python server.py
 ```
-
-
+You can then launch the AI and the Random AI (or yours if you want to beat our AI), and go on the website that server.py gives you. You'll juste have to encode the IP adresses and ports to play.
