@@ -497,6 +497,8 @@ class Server:
                             return {'cube':index,'direction':'W'}
                         else:
                             return self.coupRandom(you,body)
+            else :
+                return self.coupRandom(you,body)
         elif direction == 'colonne':
             if index % 5 == 0:
                 if body['game'][index] == you and body['game'][index+4] == you:
